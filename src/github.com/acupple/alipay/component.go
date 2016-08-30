@@ -55,6 +55,18 @@ func (c *Component)rsa(payString string) (string, error) {
 	return base64.StdEncoding.EncodeToString(signed)
 }
 
+func (c *Component)rsaVerify(signing string, signed string) (bool, error) {
+	hashSum := sha1.Sum([]byte(signing))
+
+	err := rsa.VerifyPKCS1v15(c.Alipay.PrivateApiKey, crypto.SHA1, hashSum[:], []byte(signed))
+
+	if err != nil {
+		return false, err
+	}
+
+	return false
+}
+
 func (c *Component)BuildSignStringWithWrapChar(payParams map[string]string, wrapChar string) string {
 	keys := make([]string, len(payParams))
 	i :=0
