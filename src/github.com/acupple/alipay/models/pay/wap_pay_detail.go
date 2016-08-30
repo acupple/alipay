@@ -1,6 +1,6 @@
 package pay
 
-type WepPayDetail struct {
+type WapPayDetail struct {
 	PayDetail
 	/**
 	 * 商品展示网址
@@ -43,7 +43,7 @@ type WepPayDetail struct {
 	Scene string
 }
 
-func (m *WepPayDetail) ToString() {
+func (m *WapPayDetail) ToString() {
 	return "WapPayFields{" +
 		"showUrl='" + m.ShowUrl + '\'' +
 		", externToken='" + m.ExternToken + '\'' +

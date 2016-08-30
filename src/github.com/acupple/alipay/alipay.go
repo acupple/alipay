@@ -2,6 +2,10 @@ package alipay
 
 import (
 	"github.com/acupple/alipay/enums"
+	"crypto/rsa"
+	"encoding/pem"
+	"errors"
+	"crypto/x509"
 )
 
 const (
@@ -79,6 +83,10 @@ type Alipay struct {
 	Verifies Verifies
 
 	Refunds Refunds
+
+	PrivateApiKey *rsa.PrivateKey
+
+	PublicApiKey *rsa.PublicKey
 }
 
 func NewAlipay(merchantId string, secret string) Alipay {
@@ -92,15 +100,17 @@ func NewAlipay(merchantId string, secret string) Alipay {
 	}
 }
 
-func (p *Alipay) Start() {
-	p.initConfig()
-
+func (p *Alipay) Start() error {
+	err := p.initConfig()
+	if err != nil {
+		return err
+	}
 	p.Pays = NewPays(p)
 	p.Verifies = NewVerifies(p)
 	p.Refunds = NewRefunds(p)
 }
 
-func (p *Alipay) initConfig() {
+func (p *Alipay) initConfig() error {
 	p.PayConfig = make(map[string]string)
 	p.PayConfig[enums.PARTNER] = p.MerchantId
 	p.PayConfig[enums.SELLER_ID] = p.MerchantId
@@ -112,6 +122,45 @@ func (p *Alipay) initConfig() {
 	p.RefundConfig[enums.PARTNER] = p.MerchantId
 	p.RefundConfig[enums.INPUT_CHARSET] = p.InputCharset
 	p.RefundConfig[enums.SELLER_USER_ID] = p.MerchantId
+
+	if err := p.loadPrivateApiKey(); err != nil {
+		return err
+	}
+
+	if err := p.loadPublicApiKey(); err != nil {
+		return err
+	}
+}
+
+func (p *Alipay)loadPrivateApiKey() error {
+	block, _ := pem.Decode(p.AppPriKey)
+	if block == nil {
+		return errors.New("Malformed PEM file")
+	}
+	key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		return err
+	}
+
+	p.PrivateApiKey = key
+
+	return
+}
+
+func (p *Alipay) loadPublicApiKey() error {
+	block, _ := pem.Decode(p.PublicApiKey)
+	if block == nil {
+		return errors.New("Malformed PEM file")
+	}
+
+	rawKey, err := x509.ParsePKIXPublicKey(block.Bytes)
+	if err != nil {
+		return err
+	}
+
+	p.PublicApiKey = rawKey.(*rsa.PublicKey)
+
+	return
 }
 
 func (p *Alipay) ToString() string {
