@@ -1,11 +1,11 @@
 package alipay
 
 import (
-	"github.com/acupple/alipay/enums"
 	"crypto/rsa"
 	"encoding/pem"
 	"errors"
 	"crypto/x509"
+	"github.com/acupple/alipay/enums"
 )
 
 const (
@@ -108,6 +108,8 @@ func (p *Alipay) Start() error {
 	p.Pays = NewPays(p)
 	p.Verifies = NewVerifies(p)
 	p.Refunds = NewRefunds(p)
+
+	return nil
 }
 
 func (p *Alipay) initConfig() error {
@@ -130,6 +132,8 @@ func (p *Alipay) initConfig() error {
 	if err := p.loadPublicApiKey(); err != nil {
 		return err
 	}
+
+	return nil
 }
 
 func (p *Alipay)loadPrivateApiKey() error {

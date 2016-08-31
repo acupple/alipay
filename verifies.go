@@ -1,11 +1,11 @@
 package alipay
 
 import (
-	"github.com/acupple/alipay/enums"
 	"net/http"
 	"io/ioutil"
-	"qbox.us/errors"
+	"errors"
 	"strings"
+	"github.com/acupple/alipay/enums"
 )
 
 type Verifies struct {

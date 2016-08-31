@@ -5,12 +5,12 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
-	"github.com/acupple/alipay/enums"
 	"crypto/rsa"
 	"crypto/rand"
 	"crypto/sha1"
 	"crypto"
 	"encoding/base64"
+	"github.com/acupple/alipay/enums"
 )
 
 type Component struct {
